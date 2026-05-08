@@ -20,6 +20,25 @@ RETRIEVAL_K = 3
 
 set_llm_cache(InMemoryCache())
 
+def load_document(path: Path) -> list[Document]:
+    """Load a text or PDF document into LangChain Document objects."""
+    if not path.exists():
+        raise FileNotFoundError(f"Document not found: {path}")
+
+    print(f"\nLoading document: {path}")
+    suffix = path.suffix.lower()
+
+    if suffix == ".pdf":
+        loader = PyPDFLoader(str(path))
+    elif suffix in {".txt", ".md"}:
+        loader = TextLoader(str(path), encoding="utf-8")
+    else:
+        raise ValueError(f"Unsupported document type: {suffix}")
+
+    docs = loader.load()
+    print(f"Loaded {len(docs)} document(s)")
+    return docs
+
 
 if __name__ == "__main__":
     main()
