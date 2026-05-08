@@ -10,6 +10,7 @@ from langchain_core.caches import InMemoryCache
 from langchain_core.documents import Document
 from langchain_core.globals import set_llm_cache
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_ollama import ChatOllama, OllamaEmbeddings
 
 DOCUMENT_PATH = Path(os.getenv("DOCUMENT_PATH", "data/finnish_tenant_rights.txt"))
 DB_PATH = os.getenv("DB_PATH", "db/chroma_ollama")
@@ -54,6 +55,29 @@ def split_documents(docs: Iterable[Document]) -> list[Document]:
     
     print(f"Created {len(chunks)} chunks")
     return chunks
+
+def get_embeddings() -> OllamaEmbeddings:
+    """Create the embeeding model used by Chroma."""
+    return OllamaEmbeddings(model=EMBED_MODEL)
+
+def create_vectorstore(chunks: list[Document]) -> Chroma:
+    """Embed document chunks and persist them in Chroma."""
+    print(f"Creating vector store at {DB_PATH}")
+    vectorstore = Chroma.from_documents(
+        documents=chunks,
+        embedding=get_embeddings(),
+        persist_directory=DB_PATH,
+    )
+    print(f"Stored {len(chunks)} chunks")
+    return vectorstore
+
+def load_vectorstore() -> Chroma:
+    """Load an existing Chroma vector store"""
+    print(f"Loading vector store from {DB_PATH}")
+    return Chroma(
+        persist_directory=DB_PATH,
+        embedding_function=get_embeddings()
+    )
 
 
 if __name__ == "__main__":
