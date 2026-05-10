@@ -16,12 +16,14 @@ Helppoa is a local retrieval-augmented generation (RAG) prototype for answering 
 
 - Python 3.11 or newer
 - Ollama installed and running
-- The `mistral` Ollama model
+- The `mistral` Ollama model (chat / generation)
+- The `nomic-embed-text` Ollama model (embeddings)
 
-Install the Ollama model:
+Install the Ollama models:
 
 ```bash
 ollama pull mistral
+ollama pull nomic-embed-text
 ```
 
 ## Setup
@@ -48,7 +50,7 @@ The app works with defaults, but these environment variables can override them:
 export DOCUMENT_PATH="data/finnish_tenant_rights.txt"
 export DB_PATH="db/chroma_ollama"
 export OLLAMA_MODEL="mistral"
-export OLLAMA_EMBED_MODEL="mistral"
+export OLLAMA_EMBED_MODEL="nomic-embed-text"
 ```
 
 ## Project Structure
