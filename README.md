@@ -8,9 +8,9 @@ Helppoa is a local retrieval-augmented generation (RAG) prototype for answering 
 - Chunking with overlap for better retrieval context
 - Local embeddings through Ollama
 - Persistent local vector storage with ChromaDB
-- Local chat responses through `ChatOllama`
+- Extractive local chat responses through `ChatOllama`
 - In-memory LLM response cache for repeated identical prompts
-- CLI mode for testing and interactive questions
+- Interactive CLI mode for questions
 
 ## Requirements
 
@@ -77,7 +77,7 @@ user question
   -> embed with Ollama
   -> retrieve top matching chunks
   -> send context and question to ChatOllama
-  -> return answer
+  -> return an answer grounded in the retrieved wording
 ```
 
 On the first run, Helppoa creates a Chroma vector database from the configured document. On later runs, it loads the existing vector database to avoid re-embedding the same source text.
@@ -113,4 +113,4 @@ sqlite3 db/chroma_ollama/chroma.sqlite3 "select count(*) from embeddings;"
 
 ## Notes
 
-This is a prototype, not legal advice software. The assistant is instructed to answer only from the retrieved context and to avoid using outside knowledge.
+This is a prototype, not legal advice software. The assistant is instructed to answer only from the retrieved context and preserve the source wording instead of correcting or normalizing it.
