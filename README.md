@@ -1,20 +1,23 @@
 # Helppoa
 
-Helppoa is a local retrieval-augmented generation (RAG) prototype for answering questions from a small tenant-rights knowledge base. The project runs locally with Ollama, Mistral, LangChain, and ChromaDB.
+Helppoa is a local retrieval-augmented generation (RAG) prototype for answering questions from uploaded documents. Upload a PDF, TXT, or Markdown file through the web UI, then ask questions grounded in the document's content. Everything runs locally with Ollama, Mistral, LangChain, and ChromaDB.
 
 ## Features
 
-- Local document ingestion for `.txt`, `.md`, and `.pdf` files
+- **Web UI** — React + TypeScript frontend with file upload and chat interface
+- **FastAPI backend** — REST API with `/upload`, `/ask`, and `/status` endpoints
+- **Local document ingestion** for `.pdf`, `.txt`, and `.md` files (up to 25 MB)
 - Chunking with overlap for better retrieval context
-- Local embeddings through Ollama
+- Local embeddings through Ollama (`nomic-embed-text`)
 - Persistent local vector storage with ChromaDB
-- Extractive local chat responses through `ChatOllama`
+- Extractive chat responses through `ChatOllama` (`mistral`)
 - In-memory LLM response cache for repeated identical prompts
-- Interactive CLI mode for questions
+- Interactive **CLI mode** available via `rag.py`
 
 ## Requirements
 
 - Python 3.11 or newer
+- Node.js 18+ and npm (for the frontend)
 - Ollama installed and running
 - The `mistral` Ollama model (chat / generation)
 - The `nomic-embed-text` Ollama model (embeddings)
@@ -28,7 +31,9 @@ ollama pull nomic-embed-text
 
 ## Setup
 
-Create a virtual environment and install dependencies:
+### Backend
+
+Create a virtual environment and install Python dependencies:
 
 ```bash
 python3 -m venv venv
@@ -36,18 +41,51 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Run the app:
+### Frontend
+
+Install Node dependencies:
+
+```bash
+cd frontend
+npm install
+```
+
+## Running the App
+
+### Option 1: Web UI (recommended)
+
+Start the FastAPI backend and the Vite dev server in two terminals:
+
+```bash
+# Terminal 1 — API server
+venv/bin/uvicorn api.main:app --reload
+
+# Terminal 2 — Frontend dev server
+cd frontend && npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser. The Vite dev server proxies `/api/*` requests to the FastAPI backend automatically.
+
+### Option 2: CLI mode
 
 ```bash
 ./venv/bin/python rag.py
 ```
+
+## API Endpoints
+
+| Method | Path      | Description                          |
+|--------|-----------|--------------------------------------|
+| GET    | `/status` | Returns indexing status and metadata |
+| POST   | `/upload` | Upload a document for ingestion      |
+| POST   | `/ask`    | Ask a question about the indexed doc |
 
 ## Configuration
 
 The app works with defaults, but these environment variables can override them:
 
 ```bash
-export DOCUMENT_PATH="data/finnish_tenant_rights.txt"
+export DOCUMENT_PATH="data/helppoa_test_reference.pdf"
 export DB_PATH="db/chroma_ollama"
 export OLLAMA_MODEL="mistral"
 export OLLAMA_EMBED_MODEL="nomic-embed-text"
@@ -57,14 +95,34 @@ export OLLAMA_EMBED_MODEL="nomic-embed-text"
 
 ```text
 helppoa/
+├── api/
+│   ├── __init__.py
+│   ├── main.py            # FastAPI app — routes and middleware
+│   └── rag_service.py     # HTTP-friendly RAG pipeline wrapper
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ChatBox.tsx
+│   │   │   └── FileUpload.tsx
+│   │   ├── App.tsx
+│   │   ├── api.ts
+│   │   ├── main.tsx
+│   │   ├── styles.css
+│   │   └── types.ts
+│   ├── index.html
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── vite.config.ts
+├── scripts/
+│   └── generate_test_pdf.py  # Generate fictional test PDF
 ├── data/
-│   └── finnish_tenant_rights.txt
-├── rag.py
+│   └── helppoa_test_reference.pdf
+├── rag.py                 # Core RAG pipeline + CLI
 ├── requirements.txt
 └── README.md
 ```
 
-`db/chroma_ollama/` is created locally on first run and is ignored by Git.
+`db/chroma_ollama/` and `data/uploads/` are created at runtime and ignored by Git.
 
 ## How It Works
 
@@ -82,9 +140,26 @@ user question
   -> return an answer grounded in the retrieved wording
 ```
 
-On the first run, Helppoa creates a Chroma vector database from the configured document. On later runs, it loads the existing vector database to avoid re-embedding the same source text.
+On first upload (or CLI run), Helppoa creates a Chroma vector database from the document. The web UI uses replace-the-corpus semantics — each new upload wipes and rebuilds the index.
+
+## Generating the Test PDF
+
+A fictional 20-page reference document can be generated for testing:
+
+```bash
+pip install reportlab  # if not already installed
+venv/bin/python scripts/generate_test_pdf.py
+```
+
+This writes `data/helppoa_test_reference.pdf` with 10 civic topics and worked examples. All content is clearly marked as fictional.
 
 ## Updating The Knowledge Base
+
+### Web UI
+
+Simply upload a new file through the browser. The previous index is replaced automatically.
+
+### CLI
 
 Replace or edit the source document in `data/`, then remove the local vector database so it can be rebuilt:
 
