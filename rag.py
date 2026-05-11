@@ -16,13 +16,13 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
 # ─── CONFIG ──────────────────────────────────────────────────
-DOCUMENT_PATH    = Path(os.getenv("DOCUMENT_PATH", "data/finnish_tenant_rights.txt"))
+DOCUMENT_PATH    = Path(os.getenv("DOCUMENT_PATH", "data/helppoa_test_reference.pdf"))
 DB_PATH          = os.getenv("DB_PATH", "db/chroma_ollama")
 MODEL            = os.getenv("OLLAMA_MODEL", "mistral")
 EMBED_MODEL      = os.getenv("OLLAMA_EMBED_MODEL", "nomic-embed-text")
 CHUNK_SIZE       = 1000
 CHUNK_OVERLAP    = 150
-RETRIEVAL_K      = 3
+RETRIEVAL_K      = 5
 
 # Cache same questions — no repeated LLM calls
 set_llm_cache(InMemoryCache())
