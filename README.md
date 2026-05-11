@@ -113,10 +113,7 @@ helppoa/
 │   ├── package.json
 │   ├── tsconfig.json
 │   └── vite.config.ts
-├── scripts/
-│   └── generate_test_pdf.py  # Generate fictional test PDF
 ├── data/
-│   └── helppoa_test_reference.pdf
 ├── rag.py                 # Core RAG pipeline + CLI
 ├── requirements.txt
 └── README.md
@@ -142,16 +139,6 @@ user question
 
 On first upload (or CLI run), Helppoa creates a Chroma vector database from the document. The web UI uses replace-the-corpus semantics — each new upload wipes and rebuilds the index.
 
-## Generating the Test PDF
-
-A fictional 20-page reference document can be generated for testing:
-
-```bash
-pip install reportlab  # if not already installed
-venv/bin/python scripts/generate_test_pdf.py
-```
-
-This writes `data/helppoa_test_reference.pdf` with 10 civic topics and worked examples. All content is clearly marked as fictional.
 
 ## Updating The Knowledge Base
 
