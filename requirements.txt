@@ -6,3 +6,8 @@ langchain-core
 langchain-ollama
 langchain-text-splitters
 pypdf
+
+# API layer
+fastapi
+uvicorn[standard]
+python-multipart
