@@ -6,6 +6,12 @@ venv/
 CLAUDE.md
 
 db/
+data/uploads/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
 
 .env
 .DS_Store

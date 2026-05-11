@@ -1,0 +1,217 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #f6f7f9;
+  color: #1a1a1a;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+header h1 {
+  margin: 0 0 4px;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  margin: 0 0 24px;
+  color: #5e6573;
+  font-size: 14px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.card h2 {
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #5e6573;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.error {
+  background: #fff0f0;
+  border: 1px solid #f5b5b5;
+  color: #9a1c1c;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.hint {
+  margin-top: 8px;
+  color: #8a909c;
+  font-size: 12px;
+}
+
+.file-upload-label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  background: #111827;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.file-upload-label:hover {
+  background: #1f2937;
+}
+
+.file-upload-label input {
+  display: none;
+}
+
+.status {
+  margin-top: 14px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.status code {
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.chat-form {
+  display: flex;
+  gap: 8px;
+}
+
+.chat-form input[type="text"] {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+}
+
+.chat-form input[type="text"]:focus {
+  outline: none;
+  border-color: #111827;
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+}
+
+.chat-form button {
+  background: #111827;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.chat-form button:hover:not(:disabled) {
+  background: #1f2937;
+}
+
+.chat-form button:disabled,
+.chat-form input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.turns {
+  margin-top: 16px;
+}
+
+.turn {
+  border-top: 1px solid #f1f2f4;
+  padding: 14px 0;
+}
+
+.turn .q,
+.turn .a {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.turn .label {
+  flex: 0 0 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: #e5e7eb;
+  color: #374151;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.turn .a .label {
+  background: #111827;
+  color: white;
+}
+
+.turn .a span:last-child {
+  background: #f8fafc;
+  padding: 10px 12px;
+  border-radius: 6px;
+  flex: 1;
+}
+
+.citations {
+  font-size: 13px;
+  color: #4b5563;
+  margin-top: 6px;
+}
+
+.citations summary {
+  cursor: pointer;
+  color: #6b7280;
+  padding: 4px 0;
+}
+
+.citations ol {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+.citations li {
+  margin-bottom: 8px;
+}
+
+.citations code {
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  margin-right: 6px;
+}
+
+.citations .snippet {
+  color: #4b5563;
+}
