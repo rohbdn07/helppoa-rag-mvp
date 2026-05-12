@@ -25,6 +25,11 @@ export async function uploadFile(file: File): Promise<Status> {
   return r.json();
 }
 
+export async function resetSession(): Promise<void> {
+  const r = await fetch(`${BASE}/reset`, { method: "POST" });
+  if (!r.ok) throw new Error(await parseError(r));
+}
+
 export async function askQuestion(question: string): Promise<AskResponse> {
   const r = await fetch(`${BASE}/ask`, {
     method: "POST",

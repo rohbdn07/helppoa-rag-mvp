@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FileUpload } from "./components/FileUpload";
 import { ChatBox } from "./components/ChatBox";
-import { getStatus } from "./api";
+import { getStatus, resetSession } from "./api";
 import type { Status } from "./types";
 
 export default function App() {
@@ -18,7 +18,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    refresh();
+    resetSession().catch(() => null).then(refresh);
   }, []);
 
   return (
