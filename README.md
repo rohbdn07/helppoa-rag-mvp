@@ -1,20 +1,20 @@
-# Helppoa
+# 🇫🇮 Helppoa
 
 Helppoa is a local retrieval-augmented generation (RAG) prototype for answering questions from uploaded documents. Upload a PDF, TXT, or Markdown file through the web UI, then ask questions grounded in the document's content. Everything runs locally with Ollama, Mistral, LangChain, and ChromaDB.
 
-## Features
+## ✨ Features
 
-- **Web UI** — React + TypeScript frontend with file upload and chat interface
-- **FastAPI backend** — REST API with `/upload`, `/ask`, `/status`, and `/reset` endpoints
-- **Local document ingestion** for `.pdf`, `.txt`, and `.md` files (up to 25 MB)
-- Chunking with overlap for better retrieval context
-- Local embeddings through Ollama (`nomic-embed-text`)
-- Persistent local vector storage with ChromaDB
-- Extractive chat responses through `ChatOllama` (`mistral`)
-- In-memory LLM response cache for repeated identical prompts
-- Interactive **CLI mode** available via `rag.py`
+- 🖥️ **Web UI** — React + TypeScript frontend with file upload and chat interface
+- ⚡ **FastAPI backend** — REST API with `/upload`, `/ask`, `/status`, and `/reset` endpoints
+- 📄 **Local document ingestion** for `.pdf`, `.txt`, and `.md` files (up to 25 MB)
+- 🔍 Chunking with overlap for better retrieval context
+- 🧮 Local embeddings through Ollama (`nomic-embed-text`)
+- 💾 Persistent local vector storage with ChromaDB
+- 💬 Extractive chat responses through `ChatOllama` (`mistral`)
+- ⚡ In-memory LLM response cache for repeated identical prompts
+- 🖥️ Interactive **CLI mode** available via `rag.py`
 
-## Requirements
+## 📋 Requirements
 
 - Python 3.11 or newer
 - Node.js 18+ and npm (for the frontend)
@@ -29,7 +29,7 @@ ollama pull mistral
 ollama pull nomic-embed-text
 ```
 
-## Setup
+## 🚀 Setup
 
 ### Backend
 
@@ -50,7 +50,7 @@ cd frontend
 npm install
 ```
 
-## Running the App
+## ▶️ Running the App
 
 ### Option 1: Web UI (recommended)
 
@@ -72,7 +72,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser. The Vite de
 ./venv/bin/python rag.py
 ```
 
-## API Endpoints
+## 🔌 API Endpoints
 
 | Method | Path      | Description                          |
 |--------|-----------|--------------------------------------|
@@ -81,7 +81,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser. The Vite de
 | POST   | `/ask`    | Ask a question about the indexed doc |
 | POST   | `/reset`  | Clear the current session and index  |
 
-## Configuration
+## ⚙️ Configuration
 
 The app works with defaults, but these environment variables can override them:
 
@@ -92,7 +92,7 @@ export OLLAMA_MODEL="mistral"
 export OLLAMA_EMBED_MODEL="nomic-embed-text"
 ```
 
-## Project Structure
+## 📁 Project Structure
 
 ```text
 helppoa/
@@ -122,7 +122,7 @@ helppoa/
 
 `db/chroma_ollama/` is created at runtime and ignored by Git. Uploaded files are written to a system temp directory during indexing and deleted immediately after.
 
-## How It Works
+## 🔄 How It Works
 
 ```text
 source document
@@ -141,7 +141,7 @@ user question
 On first upload (or CLI run), Helppoa creates a Chroma vector database from the document. The web UI uses replace-the-corpus semantics — each new upload wipes and rebuilds the index. Refreshing the browser resets the session, so each visit starts with a clean state.
 
 
-## Updating The Knowledge Base
+## 📝 Updating The Knowledge Base
 
 ### Web UI
 
@@ -156,7 +156,7 @@ rm -rf db/chroma_ollama
 ./venv/bin/python rag.py
 ```
 
-## Caching
+## ⚡ Caching
 
 The app uses LangChain's `InMemoryCache` for LLM calls. This cache only lasts while the Python process is running and only applies to exact repeated prompts.
 
@@ -167,7 +167,7 @@ It does not cache:
 - semantically similar questions
 - results across separate runs
 
-## Inspecting Chroma
+## 🔎 Inspecting Chroma
 
 Chroma stores metadata in SQLite and vector index data in binary files. To inspect the local database:
 
@@ -176,6 +176,6 @@ sqlite3 db/chroma_ollama/chroma.sqlite3 ".tables"
 sqlite3 db/chroma_ollama/chroma.sqlite3 "select count(*) from embeddings;"
 ```
 
-## Notes
+## ⚠️ Notes
 
 This is a prototype, not legal advice software. The assistant is instructed to answer only from the retrieved context and preserve the source wording instead of correcting or normalizing it.
