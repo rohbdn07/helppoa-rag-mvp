@@ -5,7 +5,7 @@ Helppoa is a local retrieval-augmented generation (RAG) prototype for answering 
 ## Features
 
 - **Web UI** — React + TypeScript frontend with file upload and chat interface
-- **FastAPI backend** — REST API with `/upload`, `/ask`, and `/status` endpoints
+- **FastAPI backend** — REST API with `/upload`, `/ask`, `/status`, and `/reset` endpoints
 - **Local document ingestion** for `.pdf`, `.txt`, and `.md` files (up to 25 MB)
 - Chunking with overlap for better retrieval context
 - Local embeddings through Ollama (`nomic-embed-text`)
@@ -79,6 +79,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser. The Vite de
 | GET    | `/status` | Returns indexing status and metadata |
 | POST   | `/upload` | Upload a document for ingestion      |
 | POST   | `/ask`    | Ask a question about the indexed doc |
+| POST   | `/reset`  | Clear the current session and index  |
 
 ## Configuration
 
@@ -119,7 +120,7 @@ helppoa/
 └── README.md
 ```
 
-`db/chroma_ollama/` and `data/uploads/` are created at runtime and ignored by Git.
+`db/chroma_ollama/` is created at runtime and ignored by Git. Uploaded files are written to a system temp directory during indexing and deleted immediately after.
 
 ## How It Works
 
@@ -137,7 +138,7 @@ user question
   -> return an answer grounded in the retrieved wording
 ```
 
-On first upload (or CLI run), Helppoa creates a Chroma vector database from the document. The web UI uses replace-the-corpus semantics — each new upload wipes and rebuilds the index.
+On first upload (or CLI run), Helppoa creates a Chroma vector database from the document. The web UI uses replace-the-corpus semantics — each new upload wipes and rebuilds the index. Refreshing the browser resets the session, so each visit starts with a clean state.
 
 
 ## Updating The Knowledge Base
