@@ -95,6 +95,15 @@ class RAGService:
             self._chunk_count = len(chunks)
             return self.status
 
+    def reset(self) -> None:
+        """Mark service as not-ready. The live vectorstore reference is kept so
+        that the next ingest() can wipe data via delete_collection() through the
+        same SQLite connection — rmtree on an open handle causes SQLITE_READONLY_DBMOVED."""
+        with self._lock:
+            self._chain = None
+            self._current_doc = None
+            self._chunk_count = 0
+
     def ask(self, question: str) -> dict[str, Any]:
         if self._chain is None:
             raise RuntimeError("No document indexed yet. Upload a file first.")
