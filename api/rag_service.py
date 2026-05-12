@@ -96,18 +96,23 @@ class RAGService:
             return self.status
 
     def reset(self) -> None:
-        """Mark service as not-ready. The live vectorstore reference is kept so
-        that the next ingest() can wipe data via delete_collection() through the
-        same SQLite connection — rmtree on an open handle causes SQLITE_READONLY_DBMOVED."""
+        """Clear in-memory session state (chain, doc name, chunk count).
+        The vectorstore reference is intentionally kept so the next ingest()
+        can wipe data via delete_collection() through the same live SQLite
+        connection — rmtree on an open handle causes SQLITE_READONLY_DBMOVED.
+        The on-disk DB is NOT deleted here; it is overwritten on next ingest."""
         with self._lock:
             self._chain = None
             self._current_doc = None
             self._chunk_count = 0
 
     def ask(self, question: str) -> dict[str, Any]:
-        if self._chain is None:
+        # Snapshot avoids a race where reset() sets _chain=None between the
+        # None-check and invoke().
+        chain = self._chain
+        if chain is None:
             raise RuntimeError("No document indexed yet. Upload a file first.")
-        result = self._chain.invoke(question)
+        result = chain.invoke(question)
         return {
             "question": question,
             "answer": result["answer"],

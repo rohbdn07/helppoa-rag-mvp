@@ -18,7 +18,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    resetSession().catch(() => null).then(refresh);
+    resetSession().catch(console.error).then(refresh);
   }, []);
 
   return (
