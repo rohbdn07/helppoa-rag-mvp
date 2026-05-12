@@ -4,6 +4,8 @@ Run from the project root:
     venv/bin/uvicorn api.main:app --reload
 """
 
+import tempfile
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
@@ -13,32 +15,27 @@ from pydantic import BaseModel
 from api.rag_service import service
 
 
-UPLOAD_DIR = Path("data/uploads")
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-
 ALLOWED_EXTENSIONS = {".pdf", ".txt", ".md"}
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024  # 25 MB
 
 
-app = FastAPI(title="Helppoa API", version="0.1.0")
-
-app.add_middleware(
-    CORSMiddleware,
-    # In dev the Vite proxy means the browser never sees the FastAPI origin
-    # directly. Listed origins are a fallback if someone hits the API from a
-    # different host during local hacking.
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
-@app.on_event("startup")
-def on_startup() -> None:
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     try:
         service.warmup()
     except Exception as exc:  # noqa: BLE001 — never block startup
         print(f"[startup] warmup skipped: {exc}")
+    yield
+
+
+app = FastAPI(title="Helppoa API", version="0.1.0", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class AskRequest(BaseModel):
@@ -47,6 +44,12 @@ class AskRequest(BaseModel):
 
 @app.get("/status")
 def get_status() -> dict:
+    return service.status
+
+
+@app.post("/reset")
+def reset_session() -> dict:
+    service.reset()
     return service.status
 
 
@@ -72,16 +75,16 @@ async def upload(file: UploadFile = File(...)) -> dict:
             detail=f"File too large. Max {MAX_UPLOAD_BYTES // (1024 * 1024)} MB.",
         )
 
-    dest = UPLOAD_DIR / file.filename
-    dest.write_bytes(content)
+    with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+        tmp.write(content)
+        dest = Path(tmp.name)
 
     try:
         return service.ingest(dest)
     except Exception as exc:
-        # Clean up the saved file on indexing failure so we don't leave
-        # half-processed uploads on disk.
-        dest.unlink(missing_ok=True)
         raise HTTPException(status_code=500, detail=f"Indexing failed: {exc}")
+    finally:
+        dest.unlink(missing_ok=True)
 
 
 @app.post("/ask")
